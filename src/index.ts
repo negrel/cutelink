@@ -1,46 +1,34 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
+import cutelinks from './api/v1/cutelinks'
 
-import handleProxy from './proxy';
-import handleRedirect from './redirect';
-import apiRouter from './router';
-
-// Export a default object containing event handlers
 export default {
-	// The fetch handler is invoked when this worker receives a HTTP(S) request
-	// and should return a Response (optionally wrapped in a Promise)
-	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		// You'll find it helpful to parse the request.url string into a URL object. Learn more at https://developer.mozilla.org/en-US/docs/Web/API/URL
-		const url = new URL(request.url);
+  async fetch (request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    const url = new URL(request.url)
+    switch (url.pathname) {
+      case '/api/v1/cutelinks':
+        switch (request.method) {
+          case 'GET':
+            return await cutelinks.GET(request, env, ctx)
+          case 'POST':
+            return await cutelinks.POST(request, env, ctx, url)
+          default:
+            // passthrough
+        }
+        break
+    }
 
-		// You can get pretty far with simple logic like if/switch-statements
-		switch (url.pathname) {
-			case '/redirect':
-				return handleRedirect.fetch(request, env, ctx);
+    return await redirect(request, env, ctx, url)
+  }
+}
 
-			case '/proxy':
-				return handleProxy.fetch(request, env, ctx);
-		}
+async function redirect (_request: Request, env: Env, _ctx: ExecutionContext, url: URL): Promise<Response> {
+  // Retrieve path without leading slash.
+  const cutelink = url.pathname.slice(1)
 
-		if (url.pathname.startsWith('/api/')) {
-			// You can also use more robust routing
-			return apiRouter.handle(request);
-		}
+  const options = { cacheTtl: 86400, cacheTTL: 86400 /* 24h */ }
+  const long = await env.KV_LONG_URLS.get(cutelink, options)
+  if (long !== null) {
+    return Response.redirect(long)
+  }
 
-		return new Response(
-			`Try making requests to:
-      <ul>
-      <li><code><a href="/redirect?redirectUrl=https://example.com/">/redirect?redirectUrl=https://example.com/</a></code>,</li>
-      <li><code><a href="/proxy?modify&proxyUrl=https://example.com/">/proxy?modify&proxyUrl=https://example.com/</a></code>, or</li>
-      <li><code><a href="/api/todos">/api/todos</a></code></li>`,
-			{ headers: { 'Content-Type': 'text/html' } }
-		);
-	},
-};
+  return Response.redirect('/')
+}

@@ -1,6 +1,8 @@
-name = "qtl.ink"
+name = "qtl-ink"
 main = "src/index.ts"
 compatibility_date = "2023-09-14"
+
+workers_dev = true
 
 # Variable bindings. These are arbitrary, plaintext strings (similar to environment variables)
 # Note: Use secrets to store sensitive data.
@@ -10,9 +12,13 @@ compatibility_date = "2023-09-14"
 
 # Bind a KV Namespace. Use KV as persistent storage for small key-value pairs.
 # Docs: https://developers.cloudflare.com/workers/runtime-apis/kv
-# [[kv_namespaces]]
-# binding = "MY_KV_NAMESPACE"
-# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+[[kv_namespaces]]
+binding = "KV_LONG_URLS"
+id = "2847388698c64306b2bf63eb3eca45d3"
+
+[[kv_namespaces]]
+binding = "KV_USER_URLS"
+id = "1358f00ec23d4ffa87896ca684243f00"
 
 # Bind an R2 Bucket. Use R2 to store arbitrarily large blobs of data, such as files.
 # Docs: https://developers.cloudflare.com/r2/api/workers/workers-api-usage/

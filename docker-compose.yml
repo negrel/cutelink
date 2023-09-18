@@ -1,0 +1,14 @@
+version: '3'
+services:
+  wrangler:
+    image: docker.io/library/node:20.6.1-bullseye
+    entrypoint: /bin/sh -c
+    command: ['npm install && npm start']
+    ports:
+      - 8787:8787
+    working_dir: /app
+    volumes:
+      - ./:/app:rw
+
+volumes:
+  wrangler: {}
