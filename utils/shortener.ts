@@ -71,16 +71,21 @@ export const shortener = {
     };
   },
   async unshorten(srvUrl: URL): Promise<string | null> {
+    const path = decodeURI(srvUrl.pathname);
+
     let charset = "emojis";
-    if (srvUrl.pathname.matchAll(new RegExp(`^/${alphanum}+$`, "g"))) {
+    if ((/^\/[A-Za-z0-9]+/g).test(path)) {
       charset = "alphanum";
     }
+
+    // Count grapheme.
+    const length = [...new Intl.Segmenter().segment(path)].length;
 
     const entry = await kv.get<string>([
       srvUrl.hostname,
       "link",
       charset,
-      srvUrl.pathname.length - 1, // - 1 for leading /
+      length - 1, // - 1 for leading /
       "short2long",
       srvUrl.pathname,
     ]);
