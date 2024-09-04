@@ -15,6 +15,7 @@ export const handler = [
     logger.info({
       "duration_ms": durationMs,
       "user_agent": ua,
+      "route": ctx.route,
       "path": ctx.url.pathname + "?" + ctx.url.searchParams.toString(),
       "status": resp.status,
       "source_ip": ctx.remoteAddr.hostname,
