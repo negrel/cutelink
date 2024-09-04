@@ -1,7 +1,12 @@
 import { HttpUrl } from "@/utils/url.ts";
 import { genslug } from "@/utils/genslug.ts";
-import { alphanum } from "@/utils/charset.ts";
+import { alphanum, emojis } from "@/utils/charset.ts";
 import { kv } from "@/utils/kv.ts";
+
+export type ShortenOptions = {
+  length: number;
+  charset: "emojis" | "alphanum";
+};
 
 export type ShortenedUrlResult = {
   url: HttpUrl;
@@ -27,10 +32,10 @@ const linkcount = {
 export const shortener = {
   async shorten(
     url: HttpUrl,
-    length: number,
     srvUrl: URL,
+    { length, charset }: ShortenOptions,
   ): Promise<ShortenedUrlResult> {
-    const key = [srvUrl.hostname, "link", length];
+    const key = [srvUrl.hostname, "link", charset, length];
 
     // Check if short url already exists.
     const entry = await kv.get<string>([...key, "long2short", url.href]);
@@ -43,7 +48,11 @@ export const shortener = {
 
     // Create short url otherwise.
     const linkId = await linkcount.add(srvUrl.hostname, 1n);
-    const slug = genslug(length, linkId, alphanum);
+    const slug = genslug(
+      length,
+      linkId,
+      charset === "emojis" ? emojis : alphanum,
+    );
     const shortUrl = new URL("/" + slug, srvUrl.origin);
 
     // Store it.
@@ -62,9 +71,15 @@ export const shortener = {
     };
   },
   async unshorten(srvUrl: URL): Promise<string | null> {
+    let charset = "emojis";
+    if (srvUrl.pathname.matchAll(new RegExp(`^/${alphanum}+$`, "g"))) {
+      charset = "alphanum";
+    }
+
     const entry = await kv.get<string>([
       srvUrl.hostname,
       "link",
+      charset,
       srvUrl.pathname.length - 1, // - 1 for leading /
       "short2long",
       srvUrl.pathname,
