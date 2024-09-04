@@ -11,7 +11,7 @@ export const handler = async function (
   if (resp) return resp;
 
   const url = await shortener.unshorten(ctx.url);
-  if (!url) return new Response("Resource not found.", { status: 404 });
+  if (!url) return ctx.renderNotFound();
 
   resp = Response.redirect(url, 302);
   cache.put(req, resp);

@@ -1,23 +1,31 @@
 import { Head } from "$fresh/runtime.ts";
+import { HOMEPAGE_HREF_404 } from "@/utils/config.ts";
 
 export default function Error404() {
   return (
     <>
       <Head>
-        <title>404 - Page not found</title>
+        <title>Error</title>
       </Head>
-      <div class="px-4 py-8 mx-auto bg-[#86efac]">
+      <div class="px-4 py-8 mx-auto bg-yellow-200">
         <div class="max-w-screen-md mx-auto flex flex-col items-center justify-center">
           <img
             class="my-6"
-            src="/logo.svg"
+            src="/favicon/android-chrome-512x512.png"
             width="128"
             height="128"
-            alt="the Fresh logo: a sliced lemon dripping with juice"
+            alt="Smiling face with smiling eyes"
           />
-          <h1 class="text-4xl font-bold">404 - Page not found</h1>
+          <h1 class="text-4xl font-bold text-center">
+            This link or QR Code has been deactivated
+          </h1>
+
           <p class="my-4">
-            The page you were looking for doesn't exist.
+            Use{" "}
+            <a href={HOMEPAGE_HREF_404} className="underline font-bold">
+              Cutelink
+            </a>{" "}
+            to create short links.
           </p>
           <a href="/" class="underline">Go back home</a>
         </div>
