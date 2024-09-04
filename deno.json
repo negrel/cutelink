@@ -1,5 +1,4 @@
 {
-  "lock": false,
   "tasks": {
     "lint": "deno fmt --check && deno lint && deno check **/*.ts && deno check **/*.tsx",
     "lint:fix": "deno fmt && deno lint --fix && deno check **/*.ts && deno check **/*.tsx",
