@@ -1,7 +1,7 @@
 import { FreshContext } from "$fresh/server.ts";
 import { shortener } from "@/utils/shortener.ts";
 
-const cache = await caches.open("slug");
+const cache = await caches.open(new Date().toString());
 
 export const handler = async function (
   req: Request,
