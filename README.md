@@ -1,5 +1,7 @@
 # ☺️ `cutelink` - The cutest URLs shortener.
 
+Cutelink is a simple URL shortner designed to run on Deno Deploy on the edge.
+
 ## Contributing
 
 If you want to contribute to `cutelink` to add a feature or improve the code
