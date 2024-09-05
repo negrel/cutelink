@@ -20,3 +20,9 @@ test: lint
 .PHONY: build
 build: utils/random_sequences.json
 	deno task build
+
+docker/build:
+	nix build .#docker
+	docker load < result
+	rm -f result
+
