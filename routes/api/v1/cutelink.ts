@@ -48,6 +48,16 @@ export const handler: Handlers = {
       );
     }
 
+    // Don't allow creating shortlink to URL shortener itself.
+    if (httpUrl.hostname === ctx.url.hostname) {
+      return new Response(
+        `"url" point to URL shortener itself`,
+        {
+          status: 400,
+        },
+      );
+    }
+
     const result = await shortener.shorten(httpUrl, ctx.url, {
       length,
       charset: charset as keyof (typeof validCharset),
